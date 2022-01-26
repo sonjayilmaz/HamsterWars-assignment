@@ -1,8 +1,15 @@
-/*var admin = require("firebase-admin");
+var admin = require("firebase-admin");
 
-var serviceAccount = require("path/to/serviceAccountKey.json");
+let serviceAccount;
+
+serviceAccount = require('../hamsterwarsKey.json');
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+  credential: admin.credential.cert(serviceAccount),
 });
-*/
+
+function getDatabase() {
+  return admin.firestore();
+}
+
+module.exports = getDatabase;
