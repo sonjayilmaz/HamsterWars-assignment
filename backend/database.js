@@ -1,8 +1,6 @@
-var admin = require("firebase-admin");
+const admin = require("firebase-admin");
 
-let serviceAccount;
-
-serviceAccount = require('../hamsterwarsKey.json');
+const serviceAccount = require("../hamsterwarsKey.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
