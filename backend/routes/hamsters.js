@@ -52,6 +52,19 @@ router.post('/', async(req, res) => {
 
 
 //put /hamsters/:id
+router.put('/:id', (req, res) => {
+    const object = req.body
+
+    if( !object.name || typeof object.age != 'number' || !object.favFood || !object.loves || !object.imgName || 
+    typeof object.wins != 'number' || typeof object.defeats != 'number' || typeof object.games != 'number' ) {
+        res.sendStatus(400) 
+        return
+    }
+})
+
+
+
+
 //delete /hamsters/:id
 
 
