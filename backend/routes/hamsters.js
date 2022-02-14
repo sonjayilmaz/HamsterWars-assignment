@@ -52,20 +52,42 @@ router.post('/', async(req, res) => {
 
 
 //put /hamsters/:id
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
     const object = req.body
+    const id = req.params.id
 
-    if( !object.name || typeof object.age != 'number' || !object.favFood || !object.loves || !object.imgName || 
-    typeof object.wins != 'number' || typeof object.defeats != 'number' || typeof object.games != 'number' ) {
+    if( !isHamsterObject(object) || !id ) {
         res.sendStatus(400) 
         return
     }
+    const hamstersRef = db.collection('hamsters').doc(id)
+    await hamstersRef.set(object, { merge: true })
+    res.sendStatus(200)
 })
 
 
-
+function isHamsterObject(object) {
+    if (!object) {
+        return false;
+    } else if (!object.name || typeof object.age != 'number' || !object.favFood || !object.loves || !object.imgName || 
+    typeof object.wins != 'number' || typeof object.defeats != 'number' || typeof object.games != 'number') {
+        return false;
+    } else {
+        return true;
+    }
+}
 
 //delete /hamsters/:id
+router.delete('/:id', async(req, res) => {
+    const id = req.params.id
+
+    if(!id){
+        res.sendStatus(400)
+        return
+    }
+    await db.collection('hamsters').doc(id).delete()
+    res.sendStatus(200)
+})
 
 
 
