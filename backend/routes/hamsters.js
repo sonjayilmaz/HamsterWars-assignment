@@ -23,6 +23,28 @@ router.get('/', async (req, res) =>{
 });
 
 
+//get /hamsters/random
+router.get('/random', async (req, res) => {
+    const hamstersRef = db.collection('hamsters')
+    const snapshot = await hamstersRef.get();
+
+    if( snapshot.empty){
+        res.status(404).send('Could not find any hamsters')
+        return
+    }
+    let hamsters = []
+
+    snapshot.forEach(doc => {
+        const hamster = doc.data()
+        hamster.id = doc.id
+        hamsters.push(hamster)
+    })
+    const randomHamster = Math.floor(Math.random() * hamsters.length)
+    res.status(200).send(hamsters[randomHamster])
+})
+
+
+
 
 //get /hamsters/:id
 router.get('/:id', async(req, res) => {
@@ -56,26 +78,11 @@ router.put('/:id', async (req, res) => {
     const object = req.body
     const id = req.params.id
 
-    if( !isHamsterObject(object) || !id ) {
-        res.sendStatus(400) 
-        return
-    }
     const hamstersRef = db.collection('hamsters').doc(id)
     await hamstersRef.set(object, { merge: true })
     res.sendStatus(200)
 })
 
-
-function isHamsterObject(object) {
-    if (!object) {
-        return false;
-    } else if (!object.name || typeof object.age != 'number' || !object.favFood || !object.loves || !object.imgName || 
-    typeof object.wins != 'number' || typeof object.defeats != 'number' || typeof object.games != 'number') {
-        return false;
-    } else {
-        return true;
-    }
-}
 
 //delete /hamsters/:id
 router.delete('/:id', async(req, res) => {
