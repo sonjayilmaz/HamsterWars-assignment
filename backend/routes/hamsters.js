@@ -66,9 +66,11 @@ router.post('/', async(req, res) => {
     typeof object.wins != 'number' || typeof object.defeats != 'number' || typeof object.games != 'number' ) {
         res.sendStatus(400) 
         return
-    }
+    }/* Ett objekt med id för det nya objekt som skapats i databasen: { id: "123..." }*/
         const hamstersRef = await db.collection('hamsters').add(object)
-        res.send(hamstersRef.id)
+        const newId = hamstersRef.id
+        const newObject = {id: newId}
+        res.status(200).send(newObject)
     })
 
 
