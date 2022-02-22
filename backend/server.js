@@ -5,7 +5,6 @@ const app = express();
 const cors = require('cors');
 const path = require('path');
 const hamsters = require('./routes/hamsters.js');
-const matches = require('./routes/matches.js');
 
 
 
@@ -31,7 +30,6 @@ app.get('/', (req, res) =>{
 
     //rest api for /hamsters
     app.use('/hamsters', hamsters);
-    app.use('/matches', matches);
     
     //starting the server
     app.listen(PORT, () => {

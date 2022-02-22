@@ -6,8 +6,8 @@ const router = express.Router()
 
 //get /hamsters
 router.get('/', async (req, res) =>{
-    const hamstersRef = db.collection('hamsters')
-    const snapshot = await hamstersRef.get()
+    const hamsterRef = db.collection('hamsters')
+    const snapshot = await hamsterRef.get()
 
     if( snapshot.empty ) {
         res.send([])
@@ -25,8 +25,8 @@ router.get('/', async (req, res) =>{
 
 //get /hamsters/random
 router.get('/random', async (req, res) => {
-    const hamstersRef = db.collection('hamsters')
-    const snapshot = await hamstersRef.get();
+    const hamsterRef = db.collection('hamsters')
+    const snapshot = await hamsterRef.get();
 
     if( snapshot.empty){
         res.status(404).send('Could not find any hamsters')
@@ -49,12 +49,12 @@ router.get('/random', async (req, res) => {
 //get /hamsters/:id
 router.get('/:id', async(req, res) => {
     const id = req.params.id
-    const hamstersRef = await db.collection('hamsters').doc(id).get()
-    if( !hamstersRef.exists ) {
+    const hamsterRef = await db.collection('hamsters').doc(id).get()
+    if( !hamsterRef.exists ) {
         res.status(404).send('Hamster does not exist')
         return
     }
-    const data = hamstersRef.data()
+    const data = hamsterRef.data()
     res.send(data)
 })
 
@@ -66,9 +66,9 @@ router.post('/', async(req, res) => {
     typeof object.wins != 'number' || typeof object.defeats != 'number' || typeof object.games != 'number' ) {
         res.sendStatus(400) 
         return
-    }/* Ett objekt med id för det nya objekt som skapats i databasen: { id: "123..." }*/
-        const hamstersRef = await db.collection('hamsters').add(object)
-        const newId = hamstersRef.id
+    }
+        const hamsterRef = await db.collection('hamsters').add(object)
+        const newId = hamsterRef.id
         const newObject = {id: newId}
         res.status(200).send(newObject)
     })
@@ -80,8 +80,17 @@ router.put('/:id', async (req, res) => {
     const object = req.body
     const id = req.params.id
 
-    const hamstersRef = db.collection('hamsters').doc(id)
-    await hamstersRef.set(object, { merge: true })
+    const hamsterRef = db.collection('hamsters').doc(id)
+    const hamsterDoc = await hamsterRef.get();
+    if(!hamsterDoc.exists){
+    res.sendStatus(404)
+    return
+    }
+    else if(Object.keys(object).length === 0) {
+       res.sendStatus(400)
+       return 
+    }
+    await hamsterRef.set(object, { merge: true })
     res.sendStatus(200)
 })
 
@@ -90,8 +99,15 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async(req, res) => {
     const id = req.params.id
 
+    const hamsterRef = db.collection('hamsters').doc(id)
+    const hamsterDoc = await hamsterRef.get();
+
     if(!id){
         res.sendStatus(400)
+        return
+    }
+    else if(!hamsterDoc.exists){
+        res.sendStatus(404)
         return
     }
     await db.collection('hamsters').doc(id).delete()
