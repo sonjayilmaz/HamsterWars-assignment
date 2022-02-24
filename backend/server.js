@@ -10,6 +10,7 @@ const hamsters = require('./routes/hamsters.js');
 
 const PORT = process.env.PORT || 1337;
 const staticFolder = path.join(__dirname, 'static')
+const staticImgFolder = path.join(__dirname, 'img')
 
 //middleware
 //logger - writing info about incoming request
@@ -21,6 +22,7 @@ app.use((req, res, next) => {
 app.use(express.json())//for parsing application/json
 app.use(cors());
 app.use( express.static(staticFolder) )
+app.use( '/img', express.static(staticImgFolder))
 
 //routes
 
